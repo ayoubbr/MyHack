@@ -13,12 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('teams', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('hackathon_id')->constrained('hackathons')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('jurie_id')->constrained('juries')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('project_id')->constrained('projects')->onUpdate('cascade')->onDelete('cascade');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->foreignId('role_id')->constrained('roles')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('team_id')->constrained('teams')->onUpdate('cascade')->onDelete('cascade');
+            $table->rememberToken();
             $table->timestamps();
         });
     }
@@ -30,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('teams');
+        Schema::dropIfExists('users');
     }
 };
