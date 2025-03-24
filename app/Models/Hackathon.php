@@ -9,14 +9,14 @@ class Hackathon extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['date', 'place'];
+    protected $fillable = ['name', 'date', 'place'];
 
     public function teams()
     {
         return $this->hasMany(Team::class);
     }
 
-    public function theme()
+    public function themes()
     {
         return $this->hasMany(Theme::class);
     }

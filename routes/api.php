@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HackatonController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ThemeController;
 use App\Http\Middleware\JwtMiddleware;
@@ -45,3 +46,9 @@ Route::get('themes', [ThemeController::class, 'index'])->middleware('role:organi
 Route::post('themes', [ThemeController::class, 'store'])->middleware('role:organisateur');
 Route::put('themes/{id}', [ThemeController::class, 'update'])->middleware('role:organisateur');
 Route::delete('themes/{id}', [ThemeController::class, 'delete'])->middleware('role:organisateur');
+
+
+Route::get('hackathon', [HackatonController::class, 'index']);
+Route::post('hackathon', [HackatonController::class, 'store']);
+Route::put('hackathon/{id}', [HackatonController::class, 'update']);
+Route::delete('hackathon/{id}', [HackatonController::class, 'delete']);

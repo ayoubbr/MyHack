@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('hackathons', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->date('date');
             $table->string('place');
             $table->timestamps();
