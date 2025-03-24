@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hackathon;
+use App\Models\Rule;
 use App\Models\Theme;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class HackatonController extends Controller
+class HackathonController extends Controller
 {
     public function index()
     {
@@ -24,7 +25,8 @@ class HackatonController extends Controller
             'name' => 'required',
             'date' => 'required|date',
             'place' => 'required',
-            'themes' => 'required'
+            'themes' => 'required',
+            'rules' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -41,6 +43,11 @@ class HackatonController extends Controller
             $theme = Theme::where('name', $theme_name)->first();
             $theme->hackathon()->associate($hackathon);
             $theme->save();
+        }
+
+        foreach ($request->rules as $key => $rule_name) {
+            $rule = Rule::where('name', $rule_name)->first();
+            $rule->hackathons()->attach($hackathon);
         }
 
         return response()->json([

@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('hackathon_rules', function (Blueprint $table) {
+        Schema::create('hackathon_rule', function (Blueprint $table) {
             $table->id();
             $table->foreignId('rule_id')->nullable()->constrained('rules')->onUpdate('cascade')->onDelete('set null');
             $table->foreignId('hackathon_id')->nullable()->constrained('hackathons')->onUpdate('cascade')->onDelete('set null');

@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\HackatonController;
+use App\Http\Controllers\HackathonController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RuleController;
 use App\Http\Controllers\ThemeController;
@@ -43,16 +43,21 @@ Route::middleware([JwtMiddleware::class])->group(function () {
 
 Route::put('users/{id}/roles', [RoleController::class, 'update'])->middleware('role:organisateur');
 
-Route::get('themes', [ThemeController::class, 'index'])->middleware('role:organisateur');
-Route::post('themes', [ThemeController::class, 'store'])->middleware('role:organisateur');
-Route::put('themes/{id}', [ThemeController::class, 'update'])->middleware('role:organisateur');
-Route::delete('themes/{id}', [ThemeController::class, 'delete'])->middleware('role:organisateur');
+// ->middleware('role:organisateur');
+// ->middleware('role:organisateur');
+// ->middleware('role:organisateur');
+// ->middleware('role:organisateur');
+
+Route::get('themes', [ThemeController::class, 'index']);
+Route::post('themes', [ThemeController::class, 'store']);
+Route::put('themes/{id}', [ThemeController::class, 'update']);
+Route::delete('themes/{id}', [ThemeController::class, 'delete']);
 
 
-Route::get('hackathon', [HackatonController::class, 'index']);
-Route::post('hackathon', [HackatonController::class, 'store']);
-Route::put('hackathon/{id}', [HackatonController::class, 'update']);
-Route::delete('hackathon/{id}', [HackatonController::class, 'delete']);
+Route::get('hackathon', [HackathonController::class, 'index']);
+Route::post('hackathon', [HackathonController::class, 'store']);
+Route::put('hackathon/{id}', [HackathonController::class, 'update']);
+Route::delete('hackathon/{id}', [HackathonController::class, 'delete']);
 
 
 Route::get('rules', [RuleController::class, 'index']);
