@@ -57,14 +57,37 @@ class HackathonController extends Controller
 
     public function update(Request $request, $hackthonId)
     {
-        $hackthon = Hackathon::find($hackthonId);
-        $hackthon->name = $request->name;
-        $hackthon->description = $request->description;
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'date' => 'required|date',
+            'place' => 'required',
+            'themes' => 'required',
+            'rules' => 'required'
+        ]);
 
-        $hackthon->save();
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+
+        $hackathon = Hackathon::create([
+            'name' => $request['name'],
+            'date' => $request['date'],
+            'place' => $request['place']
+        ]);
+
+        foreach ($request->themes as $key => $theme_name) {
+            $theme = Theme::where('name', $theme_name)->first();
+            $theme->hackathon()->associate($hackathon);
+            $theme->save();
+        }
+
+        foreach ($request->rules as $key => $rule_name) {
+            $rule = Rule::where('name', $rule_name)->first();
+            $rule->hackathons()->attach($hackathon);
+        }
 
         return response()->json([
-            'hackthon' => $hackthon
+            'hackthon' => $hackathon
         ]);
     }
 
