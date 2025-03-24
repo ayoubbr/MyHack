@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HackatonController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RuleController;
 use App\Http\Controllers\ThemeController;
 use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Http\Request;
@@ -52,3 +53,9 @@ Route::get('hackathon', [HackatonController::class, 'index']);
 Route::post('hackathon', [HackatonController::class, 'store']);
 Route::put('hackathon/{id}', [HackatonController::class, 'update']);
 Route::delete('hackathon/{id}', [HackatonController::class, 'delete']);
+
+
+Route::get('rules', [RuleController::class, 'index']);
+Route::post('rules', [RuleController::class, 'store']);
+Route::put('rules/{id}', [RuleController::class, 'update']);
+Route::delete('rules/{id}', [RuleController::class, 'delete']);

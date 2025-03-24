@@ -19,7 +19,7 @@ class ThemeController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator([
+        $validator = Validator::make($request->all(),[
             'name' => 'required',
             'description' => 'required'
         ]);
