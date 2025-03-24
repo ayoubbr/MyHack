@@ -9,12 +9,22 @@ class Team extends Model
 {
     use HasFactory;
 
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
     public function notes()
     {
         return $this->hasMany(Note::class);
     }
 
-    public function juries()
+    public function hackathon()
+    {
+        return $this->belongsTo(Hackathon::class);
+    }
+
+    public function jury()
     {
         return $this->belongsTo(Jury::class);
     }

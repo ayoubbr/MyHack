@@ -13,7 +13,7 @@ class JuryMember extends Model
 
     public function note()
     {
-        return $this->belongsTo(Note::class);
+        return $this->hasOne(Note::class);
     }
 
     public function jury()

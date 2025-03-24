@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Theme extends Model
 {
     use HasFactory;
+
+    public function hackathon()
+    {
+        return $this->hasMany(Hackathon::class);
+    }
 }

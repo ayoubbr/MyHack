@@ -16,18 +16,13 @@ class Hackathon extends Model
         return $this->hasMany(Team::class);
     }
 
-    public function themes()
+    public function theme()
     {
-        return $this->belongsToMany(Theme::class);
+        return $this->belongsTo(Theme::class);
     }
 
     public function rules()
     {
         return $this->belongsToMany(Theme::class);
-    }
-
-    public function users()
-    {
-        return $this->belongsToMany(User::class);
     }
 }

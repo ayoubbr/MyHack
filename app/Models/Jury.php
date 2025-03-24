@@ -9,14 +9,15 @@ class Jury extends Model
 {
     use HasFactory;
 
-    protected $fillable =['name'];
+    protected $fillable = ['name'];
 
-    public function teams(){
-        return $this->hasMany(Team::class);
+    public function team()
+    {
+        return $this->hasOne(Team::class);
     }
 
-    public function juryMembers(){
+    public function juryMembers()
+    {
         return $this->hasMany(JuryMember::class);
     }
-
 }
