@@ -12,7 +12,7 @@ class HackathonController extends Controller
 {
     public function index()
     {
-        $hackathon = Hackathon::all();
+        $hackathon = Hackathon::with(['themes', 'rules'])->get();
 
         return response()->json([
             'hackathon' => $hackathon

@@ -23,6 +23,6 @@ class Hackathon extends Model
 
     public function rules()
     {
-        return $this->belongsToMany(Theme::class);
+        return $this->belongsToMany(Rule::class);
     }
 }
