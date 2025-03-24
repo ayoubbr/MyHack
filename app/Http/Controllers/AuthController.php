@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -27,9 +28,13 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->get('name'),
             'email' => $request->get('email'),
-            'password' => Hash::make($request->get('password')),
-            'role_id' => 2,
+            'password' => Hash::make($request->get('password'))
         ]);
+
+        $role = Role::where('role_name', 'user')->first();
+
+        $user->role()->associate($role);
+        $user->save();
 
         $token = JWTAuth::fromUser($user);
 
