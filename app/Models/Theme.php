@@ -9,6 +9,8 @@ class Theme extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['name', 'description'];
+
     public function hackathon()
     {
         return $this->belongsTo(Hackathon::class);

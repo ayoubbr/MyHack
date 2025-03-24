@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ThemeController;
 use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,4 +39,9 @@ Route::middleware([JwtMiddleware::class])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 });
 
-Route::put('users/{id}/roles', [RoleController::class, 'update'])->middleware('role:organisateur');;
+Route::put('users/{id}/roles', [RoleController::class, 'update'])->middleware('role:organisateur');
+
+Route::get('themes', [ThemeController::class, 'index'])->middleware('role:organisateur');
+Route::post('themes', [ThemeController::class, 'store'])->middleware('role:organisateur');
+Route::put('themes/{id}', [ThemeController::class, 'update'])->middleware('role:organisateur');
+Route::delete('themes/{id}', [ThemeController::class, 'delete'])->middleware('role:organisateur');
