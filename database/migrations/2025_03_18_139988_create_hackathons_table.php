@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->date('date');
             $table->string('place');
-            $table->foreignId('theme_id')->nullable()->constrained('themes')->onUpdate('cascade')->onDelete('set null');
             $table->timestamps();
         });
     }
