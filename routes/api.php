@@ -4,9 +4,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HackathonController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RuleController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\ThemeController;
 use App\Http\Middleware\JwtMiddleware;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,11 +19,6 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
 
 Route::get('/', function () {
     return response()->json('hello world');
@@ -39,14 +34,18 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware([JwtMiddleware::class])->group(function () {
     Route::get('user', [AuthController::class, 'getUser']);
     Route::post('logout', [AuthController::class, 'logout']);
+
+    Route::get('teams', [TeamController::class, 'index']);
+    Route::get('teams/{id}', [TeamController::class, 'show']);
+    Route::post('teams', [TeamController::class, 'store']);
+    Route::put('teams/{id}', [TeamController::class, 'update']);
+    Route::post('teams/{id}/join', [TeamController::class, 'join']);
+    Route::post('teams/{id}/leave', [TeamController::class, 'leave']);
+
+    Route::delete('teams/{id}', [TeamController::class, 'delete'])->middleware('role:organisateur');
 });
 
 Route::put('users/{id}/roles', [RoleController::class, 'update'])->middleware('role:organisateur');
-
-// ->middleware('role:organisateur');
-// ->middleware('role:organisateur');
-// ->middleware('role:organisateur');
-// ->middleware('role:organisateur');
 
 Route::get('themes', [ThemeController::class, 'index']);
 Route::post('themes', [ThemeController::class, 'store']);
