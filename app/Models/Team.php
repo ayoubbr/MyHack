@@ -9,6 +9,8 @@ class Team extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['name', 'status'];
+
     public function users()
     {
         return $this->hasMany(User::class);
@@ -22,6 +24,11 @@ class Team extends Model
     public function hackathon()
     {
         return $this->belongsTo(Hackathon::class);
+    }
+
+    public function theme()
+    {
+        return $this->belongsTo(Theme::class);
     }
 
     public function jury()

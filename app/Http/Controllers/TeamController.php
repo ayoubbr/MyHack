@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Hackathon;
+use App\Models\Theme;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -48,7 +49,8 @@ class TeamController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'hackathon_name' => 'required|exists:hackathons,name',
-            'project' => 'nullable|string|max:255',
+            'theme_name' => 'required|exists:themes,name',
+            'project' => 'nullable|string|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -58,13 +60,14 @@ class TeamController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-        if (Auth::user()->role->role_name != 'participant') {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized action',
-                'errors' => $validator->errors()
-            ], 422);
-        }
+
+        // if (auth()->user()->role->role_name != 'participant') {
+        //     return response()->json([
+        //         'status' => 'error',
+        //         'message' => 'Unauthorized action',
+        //         'errors' => $validator->errors()
+        //     ], 422);
+        // }
 
         $hackathon = Hackathon::where('name', $request->hackathon_name)->first();
         if (!$hackathon || strtotime($hackathon->date) < time()) {
@@ -73,17 +76,25 @@ class TeamController extends Controller
                 'message' => 'Les inscriptions pour ce hackathon sont fermées'
             ], 400);
         }
+        $theme = Theme::where('name', $request->theme_name)->first();
+        if (!$theme) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Theme not found'
+            ], 400);
+        }
 
         $team = Team::create([
             'name' => $request->name,
             // 'hackathon_id' => $request->hackathon_id,
-            'project' => $request->project ?? null,
+            'status' => 'pending',
+            'project' => $request->project,
         ]);
 
         $team->hackathon()->associate($hackathon);
         $team->save();
-        $user = Auth::user();
-        $team->users()->associate($user);
+        // $user = Auth::user();
+        // $team->users()->associate($user);
 
         return response()->json([
             'status' => 'success',
@@ -196,6 +207,13 @@ class TeamController extends Controller
             ], 400);
         }
 
+        if (!$team->status = "approved" && Auth::user()->role->role_name == 'participant') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Team not approved'
+            ], 400);
+        }
+
         $team->users()->attach($user->id);
 
         return response()->json([
@@ -242,6 +260,82 @@ class TeamController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Vous avez quitté l\'équipe avec succès'
+        ]);
+    }
+
+    public function approve($id)
+    {
+        $user = Auth::user();
+        if ($user->role->role_name !== 'organisateur') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized action'
+            ], 403);
+        }
+
+        $team = Team::with('users')->find($id);
+
+        if (!$team) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Team not found'
+            ], 404);
+        }
+
+        if ($team->status != 'pending') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This team already traited'
+            ], 400);
+        }
+
+        $team->status = 'approved';
+        $team->save();
+
+        //todo notification
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Team approved',
+            'data' => $team
+        ]);
+    }
+
+    public function reject(Request $request, $id)
+    {
+        $user = Auth::user();
+        if ($user->role->role_name !== 'organisateur') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized action'
+            ], 403);
+        }
+
+        $team = Team::with('users')->find($id);
+
+        if (!$team) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Équipe non trouvée'
+            ], 404);
+        }
+
+        if ($team->status != 'pending') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Team already traited'
+            ], 400);
+        }
+
+        $team->status = 'rejected';
+        $team->save();
+
+        // Notification todo
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Team rejected',
+            'data' => $team
         ]);
     }
 }

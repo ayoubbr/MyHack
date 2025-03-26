@@ -16,8 +16,11 @@ return new class extends Migration
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('status');
+            $table->string('project');
             $table->foreignId('hackathon_id')->nullable()->constrained('hackathons')->onUpdate('cascade')->onDelete('set null');
             $table->foreignId('jurie_id')->nullable()->constrained('juries')->onUpdate('cascade')->onDelete('set null');
+            $table->foreignId('theme_id')->nullable()->constrained('themes')->onUpdate('cascade')->onDelete('set null');
             $table->timestamps();
         });
     }
