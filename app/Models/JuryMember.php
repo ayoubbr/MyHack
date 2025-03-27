@@ -11,9 +11,9 @@ class JuryMember extends Model
 
     protected $fillable = ['username', 'pin'];
 
-    public function note()
+    public function notes()
     {
-        return $this->hasOne(Note::class);
+        return $this->hasMany(Note::class);
     }
 
     public function jury()

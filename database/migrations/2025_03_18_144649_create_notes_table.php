@@ -16,8 +16,10 @@ return new class extends Migration
         Schema::create('notes', function (Blueprint $table) {
             $table->id();
             $table->float('value');
+            $table->text('comment')->nullable();
             $table->foreignId('jury_member_id')->nullable()->constrained('jury_members')->onDelete('set null')->onUpdate('cascade');
             $table->foreignId('team_id')->nullable()->constrained('teams')->onDelete('set null')->onUpdate('cascade');
+            // $table->unique(['jury_member_id', 'team_id']);
             $table->timestamps();
         });
     }

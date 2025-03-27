@@ -11,9 +11,9 @@ class Jury extends Model
 
     protected $fillable = ['name'];
 
-    public function team()
+    public function teams()
     {
-        return $this->hasOne(Team::class);
+        return $this->hasMany(Team::class);
     }
 
     public function juryMembers()
