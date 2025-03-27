@@ -122,5 +122,37 @@ class JuryController extends Controller
     }
 
   
-   
+    public function assignTeams(Request $request, $id)
+    {
+        $jury = Jury::find($id);
+
+        if (!$jury) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Jury not found'
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'team_names' => 'required|array',
+            // 'team_ids.*' => 'exists:teams,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        Team::whereIn('name', $request->team_names)
+            ->update(['jury_id' => $jury->id]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Teams assigned to jury successfully',
+            'data' => $jury->load('teams')
+        ]);
+    }
 }
