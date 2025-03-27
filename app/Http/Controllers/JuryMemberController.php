@@ -7,11 +7,10 @@ use App\Models\JuryMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class JuryMemberController extends Controller
 {
-
 
     public function index(Request $request)
     {
@@ -30,66 +29,6 @@ class JuryMemberController extends Controller
     }
 
 
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'jury_name' => 'nullable|string'
-    //     ]);
-
-    //     $jury = Jury::where('name', $request->input('jury_name'))->first();
-
-    //     do {
-    //         $userName = 'jury_' . Str::random(6);
-    //     } while (JuryMember::where('username', $userName)->exists());
-
-    //     $randomPin = Hash::make(str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT));
-    //     $juryMember = new JuryMember();
-    //     $juryMember->username = $userName;
-    //     $juryMember->pin = $randomPin;
-    //     $juryMember->jury()->associate($jury);
-    //     $juryMember->save();
-
-    //     return response()->json([
-    //         'message' => 'Compte JuryMember créé avec succès !',
-    //         'jury_member' => $juryMember
-    //     ], 201);
-    // }
-
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'username' => 'required|string|max:255',
-            'jury_id' => 'required|exists:juries,id',
-            'pin' => 'nullable|string|min:4|max:6',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validation error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $pin = $request->pin ?? Str::random(4);
-
-        $juryMember = JuryMember::create([
-            'username' => $request->username,
-            'jury_id' => $request->jury_id,
-            'pin' => $pin,
-        ]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Jury member created successfully',
-            'data' => [
-                'jury_member' => $juryMember,
-                'pin' => $pin
-            ]
-        ], 201);
-    }
-
-    
     public function show($id)
     {
         $juryMember = JuryMember::with(['jury', 'notes'])->find($id);
@@ -105,6 +44,44 @@ class JuryMemberController extends Controller
             'status' => 'success',
             'data' => $juryMember
         ]);
+    }
+
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => 'required|string|max:255',
+            'jury_name' => 'nullable|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $pin = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $pinHashed = Hash::make($pin);
+        $jury = Jury::where('name', $request->input('jury_name'))->first();
+
+        $juryMember = JuryMember::create([
+            'username' => $request->username,
+            'pin' => $pinHashed,
+        ]);
+
+        $juryMember->jury()->associate($jury);
+        $juryMember->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Jury member created successfully',
+            'data' => [
+                'jury_member' => $juryMember,
+                'pin' => $pin
+            ]
+        ], 201);
     }
 
 
@@ -148,7 +125,7 @@ class JuryMemberController extends Controller
         ]);
     }
 
-  
+
     public function delete($id)
     {
         $juryMember = JuryMember::find($id);
@@ -169,5 +146,39 @@ class JuryMemberController extends Controller
     }
 
 
-   
+    public function authenticate(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => 'required|string',
+            'pin' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $juryMember = JuryMember::where('username', $request->username)->first();
+
+        if (!$juryMember || $juryMember->pin !== $request->pin) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid credentials'
+            ], 401);
+        }
+
+        $token = JWTAuth::claims()->fromUser($juryMember);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Authentication successful',
+            'data' => [
+                'jury_member' => $juryMember->load('jury'),
+                'token' => $token
+            ]
+        ]);
+    }
 }

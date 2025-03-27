@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Jury;
-use App\Models\JuryMember;
 use App\Models\Team;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
+
 
 class JuryController extends Controller
 {
@@ -16,14 +14,14 @@ class JuryController extends Controller
     public function index()
     {
         $juries = Jury::with('juryMembers')->get();
-        
+
         return response()->json([
             'status' => 'success',
             'data' => $juries
         ]);
     }
 
-   
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -66,7 +64,7 @@ class JuryController extends Controller
         ]);
     }
 
-   
+
     public function update(Request $request, $id)
     {
         $jury = Jury::find($id);
@@ -121,7 +119,7 @@ class JuryController extends Controller
         ]);
     }
 
-  
+
     public function assignTeams(Request $request, $id)
     {
         $jury = Jury::find($id);
