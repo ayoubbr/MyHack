@@ -48,6 +48,7 @@ Route::post('teams/{id}/leave', [TeamController::class, 'leave']);
 Route::delete('teams/{id}', [TeamController::class, 'delete']);
 Route::post('teams/{id}/approve', [TeamController::class, 'approve']);
 Route::post('teams/{id}/reject', [TeamController::class, 'reject']);
+Route::post('teams/{id}/submit', [TeamController::class, 'submitProject']);
 // ->middleware('role:organisateur');
 // });
 

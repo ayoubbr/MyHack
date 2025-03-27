@@ -15,9 +15,7 @@ class TeamController extends Controller
 
     public function index(Request $request)
     {
-
-        $teams = Team::with(['users', 'hackathon'])->get();
-
+        $teams = Team::with(['users', 'hackathon', 'theme'])->get();
 
         return response()->json([
             'status' => 'success',
@@ -48,9 +46,9 @@ class TeamController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'hackathon_name' => 'required|exists:hackathons,name',
-            'theme_name' => 'required|exists:themes,name',
-            'project' => 'nullable|string|max:255'
+            'hackathon_name' => 'required',
+            'theme_name' => 'required',
+            // 'project' => 'nullable|string|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -76,6 +74,7 @@ class TeamController extends Controller
                 'message' => 'Les inscriptions pour ce hackathon sont fermées'
             ], 400);
         }
+
         $theme = Theme::where('name', $request->theme_name)->first();
         if (!$theme) {
             return response()->json([
@@ -86,9 +85,8 @@ class TeamController extends Controller
 
         $team = Team::create([
             'name' => $request->name,
-            // 'hackathon_id' => $request->hackathon_id,
             'status' => 'pending',
-            'project' => $request->project,
+            // 'project' => $request->project,
         ]);
 
         $team->hackathon()->associate($hackathon);
@@ -336,6 +334,24 @@ class TeamController extends Controller
             'status' => 'success',
             'message' => 'Team rejected',
             'data' => $team
+        ]);
+    }
+
+    public function submitProject(Request $request, $id)
+    {
+        $team = Team::find($id);
+
+        $validated = Validator::make($request->all, [
+            'project' => 'required'
+        ]);
+
+        $team->project = $validated['project'];
+        $team->save();
+
+        return response()->json([
+            'status' => 'success',
+            "message" => "Project submitted successfully",
+            "team"  => $team
         ]);
     }
 }

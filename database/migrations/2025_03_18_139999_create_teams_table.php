@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('status');
-            $table->string('project');
+            $table->string('project')->nullable();
             $table->foreignId('hackathon_id')->nullable()->constrained('hackathons')->onUpdate('cascade')->onDelete('set null');
             $table->foreignId('jurie_id')->nullable()->constrained('juries')->onUpdate('cascade')->onDelete('set null');
             $table->foreignId('theme_id')->nullable()->constrained('themes')->onUpdate('cascade')->onDelete('set null');
