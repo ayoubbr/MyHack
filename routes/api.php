@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HackathonController;
+use App\Http\Controllers\JuryController;
+use App\Http\Controllers\JuryMemberController;
+use App\Http\Controllers\NoteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RuleController;
 use App\Http\Controllers\TeamController;
@@ -44,16 +47,13 @@ Route::post('teams/{id}/join', [TeamController::class, 'join']);
 Route::post('teams/{id}/leave', [TeamController::class, 'leave']);
 // Route::delete('teams/{id}', [TeamController::class, 'delete']);
 
-// organisateurs
 Route::delete('teams/{id}', [TeamController::class, 'delete']);
 Route::post('teams/{id}/approve', [TeamController::class, 'approve']);
 Route::post('teams/{id}/reject', [TeamController::class, 'reject']);
 Route::post('teams/{id}/submit', [TeamController::class, 'submitProject']);
 // ->middleware('role:organisateur');
-// });
 
 Route::put('users/{id}/roles', [RoleController::class, 'update']);
-// ->middleware('role:organisateur');
 
 Route::get('themes', [ThemeController::class, 'index']);
 Route::post('themes', [ThemeController::class, 'store']);
@@ -71,3 +71,26 @@ Route::get('rules', [RuleController::class, 'index']);
 Route::post('rules', [RuleController::class, 'store']);
 Route::put('rules/{id}', [RuleController::class, 'update']);
 Route::delete('rules/{id}', [RuleController::class, 'delete']);
+
+
+Route::get('juries', [JuryController::class, 'index']);
+Route::get('juries/{id}', [JuryController::class, 'show']);
+Route::post('juries', [JuryController::class, 'store']);
+Route::put('juries/{id}', [JuryController::class, 'update']);
+Route::delete('juries/{id}', [JuryController::class, 'delete']);
+Route::post('juries/{id}/assign-teams', [JuryController::class, 'assignTeams']);
+
+
+Route::get('jury-members', [JuryMemberController::class, 'index']);
+Route::get('jury-members/{id}', [JuryMemberController::class, 'show']);
+Route::post('jury-members', [JuryMemberController::class, 'store']);
+Route::put('jury-members/{id}', [JuryMemberController::class, 'update']);
+Route::delete('jury-members/{id}', [JuryMemberController::class, 'delete']);
+
+
+Route::get('notes', [NoteController::class, 'index']);
+Route::get('notes/{id}', [NoteController::class, 'show']);
+Route::post('notes', [NoteController::class, 'store']);
+Route::put('notes/{id}', [NoteController::class, 'update']);
+Route::delete('notes/{id}', [NoteController::class, 'delete']);
+Route::get('teams/{id}/average-score', [NoteController::class, 'teamAverage']);

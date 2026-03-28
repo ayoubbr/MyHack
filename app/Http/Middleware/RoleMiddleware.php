@@ -16,11 +16,18 @@ class RoleMiddleware
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, $role)
     {
-        if (!JWTAuth::parseToken()->authenticate() || JWTAuth::parseToken()->authenticate()->role->role_name !== 'organisateur') {
-            abort(403, 'Unauthorized action.');
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if (!$user || $user->role->role_name !== $role) {
+                return response()->json(['error' => 'Unauthorized action.'], 403);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Unauthorized. Token error.'], 401);
         }
+
 
         return $next($request);
     }

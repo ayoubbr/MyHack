@@ -64,6 +64,7 @@ class JuryMemberController extends Controller
 
         $pin = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
         $pinHashed = Hash::make($pin);
+        
         $jury = Jury::where('name', $request->input('jury_name'))->first();
 
         $juryMember = JuryMember::create([
@@ -163,7 +164,7 @@ class JuryMemberController extends Controller
 
         $juryMember = JuryMember::where('username', $request->username)->first();
 
-        if (!$juryMember || $juryMember->pin !== $request->pin) {
+        if (!$juryMember || !Hash::check($request->pin, $juryMember->pin)) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Invalid credentials'
@@ -178,7 +179,7 @@ class JuryMemberController extends Controller
             'data' => [
                 'jury_member' => $juryMember->load('jury'),
                 'token' => $token
-            ]
+            ]   
         ]);
     }
 }
